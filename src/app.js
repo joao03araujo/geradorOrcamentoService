@@ -1,16 +1,35 @@
-const express = require('express');
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
 
-const app = express();
+const MongoClient = require('mongodb').MongoClient;
 
-const hostname = "localhost";
+const uri = "mongodb://<dbuser:<dbpassword>@ds133279.mlab.com:33279/crud-nodejs";
 
-const port = 3000; 
+MongoClient.connect(uri, (err, client) => {
+    if (err) return console.log(err)
+    db = client.db('orcamento-bd') // coloque o nome do seu DB
 
-app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Seja bem vindo' });
-});
+    app.listen(3000, () => {
+        console.log('Server running on port 3001')
+    })
+})
 
-const gerarOrcamento = require('./services/gerarOrcamento');
-app.use('/services', gerarOrcamento);
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.listen(port, hostname, () => console.log('Express is running on http://localhost:3000'));
+app.get('/orcamento', (req, res) => {
+    db.collection('data').find().toArray((err, results) => {
+        if (err) return console.log(err)
+        res.render('show.ejs', { data: results })
+
+    })
+})
+
+app.post('/orcamento', (req, res) => {
+    db.collection('data').save(req.body, (err, result) => {
+        if (err) return console.log(err)
+
+        console.log('Salvo no Banco de Dados - Status code 200')
+        res.redirect('/orcamento')
+    })
+})

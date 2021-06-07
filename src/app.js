@@ -4,7 +4,7 @@ const app = express()
 
 const MongoClient = require('mongodb').MongoClient;
 
-const uri = "mongodb://<dbuser:<dbpassword>@ds133279.mlab.com:33279/crud-nodejs";
+const uri = "mongodb://<dbuser:<dbpassword>@ds133279.mlab.com:33279/crud-nodejs"; // coloque a url que o Mlab gerou
 
 MongoClient.connect(uri, (err, client) => {
     if (err) return console.log(err)
